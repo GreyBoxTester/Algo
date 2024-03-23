@@ -1,0 +1,6 @@
+.vs/
+Algo/
+x64/
+*.sln
+*.vcxproj*
+main.cpp

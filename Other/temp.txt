@@ -1,0 +1,258 @@
+
+i64 n, m, k; std::cin >> n >> m >> k;
+    std::vector<i64> a(n);
+    for (auto& ai : a) { std::cin >> ai; }
+    std::vector<i64> d(m);
+    for (auto& ai : d) { std::cin >> ai; }
+    std::vector<i64> f(k);
+    for (auto& ai : f) { std::cin >> ai; }
+    
+    std::sort(d.begin(), d.end());
+    std::sort(f.begin(), f.end());
+
+    std::vector<i64> ind;
+    i64 dis = 1;
+    for (i64 i = 0; i < n - 1; i++)
+    {
+        i64 di = a[i + 1] - a[i];
+        if (di > dis) { dis = di; ind.clear(); ind.push_back(i); }
+        else if (di == dis) { ind.push_back(i); }
+    }
+
+    if (dis == 1) { std::cout << "1\n"; return; }
+
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
+#include <ranges>
+#include <algorithm>
+#include <limits>
+#include <numeric>
+#include <cstdint>
+#include <cmath>
+#include <random>
+#include <map>
+#include <bit>
+#include <deque>
+
+namespace rn = std::ranges;
+namespace rv = std::ranges::views;
+
+using i64 = int64_t;
+using u64 = uint64_t;
+using u32 = uint32_t;
+
+struct Node
+{
+    std::vector<std::pair<i64, bool>> next;
+    bool v = false;
+};
+
+std::vector<Node> nodes;
+std::vector<i64> path;
+void eulerPath(i64 i)
+{
+    for (auto& [next, del] : nodes[i].next)
+    {
+        if (del) { continue; }
+        del = 1;
+        eulerPath(next);
+    }
+    path.push_back(i);
+}
+
+void dfs(i64 i)
+{
+    if (nodes[i].v) { return; }
+    nodes[i].v = true;
+    for (auto& [next, del] : nodes[i].next)
+    {
+        dfs(next);
+    }
+}
+
+int main()
+{
+    std::ios_base::sync_with_stdio(false); std::cin.tie(nullptr);
+    i64 n, m; std::cin >> n >> m;
+    nodes.resize(n);
+    for (i64 i = 0; i < m; i++)
+    {
+        i64 a, b; std::cin >> a >> b; a--; b--;
+        nodes[a].next.push_back({ b, false });
+        nodes[b].next.push_back({ a, false });
+    }
+    
+    dfs(0);
+    for (i64 i = 0; i < n; i++)
+    {
+        if (!nodes[i].v) { std::cout << "0\n"; return 0; }
+    }
+
+    
+}
+
+
+
+std::vector<i64> mind;
+std::vector<i64> primes;
+
+void calc(i64 n)
+{
+    mind.resize(n + 1);
+    for (i64 k = 2; k <= n; k++) 
+    {
+        if (mind[k] == 0) {
+            mind[k] = k;
+            primes.push_back(k);
+        }
+        for (i64 x : primes) {
+            if (x > mind[k] || x * k > n) { break; }
+            mind[k * x] = x;
+        }
+    }
+}
+
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <limits>
+#include <numeric>
+#include <numbers>
+#include <queue>
+#include <cmath>
+#include <random>
+#include <bit>
+
+using i64 = int64_t;
+using u64 = uint64_t;
+using u32 = uint32_t;
+
+struct TreapNode
+{
+    i64 size, priority, val;
+    TreapNode* l = nullptr;
+    TreapNode* r = nullptr;
+};
+
+i64 size(TreapNode* t) { return t ? t->size : 0; }
+
+void upd(TreapNode* t) { t->size = 1 + size(t->l) + size(t->r); }
+
+std::pair<TreapNode*, TreapNode*> split(TreapNode* t, i64 k)
+{
+    if (!t) { return { nullptr, nullptr }; }
+
+    if (size(t->l) + 1 <= k)
+    {
+        auto [t1, t2] = split(t->r, k - size(t->l) - 1);
+        t->r = t1;
+        upd(t);
+        return { t, t2 };
+    }
+    else
+    {
+        auto [t1, t2] = split(t->l, k);
+        t->l = t2;
+        upd(t);
+        return { t1, t };
+    }
+}
+
+TreapNode* merge(TreapNode* t1, TreapNode* t2)
+{
+    if (!t1) { return t2; }
+    if (!t2) { return t1; }
+
+    if (t1->priority > t2->priority)
+    {
+        t1->r = merge(t1->r, t2);
+        return t1;
+    }
+    else
+    {
+        t2->l = merge(t1, t2->l);
+        return t2;
+    }
+}
+
+void destroy(TreapNode* t)
+{
+    if (t == nullptr) { return; }
+    destroy(t->l);
+    destroy(t->r);
+    delete t;
+}
+
+i64 randomPriority()
+{
+    static std::mt19937 re((std::random_device())());
+    return std::uniform_int_distribution()(re);
+}
+
+TreapNode* insert(TreapNode* t, i64 i, i64 val)
+{
+    auto [l, r] = split(t, i);
+    TreapNode* element = new TreapNode{ 1, randomPriority(), val };
+    return merge(merge(l, element), r);
+}
+
+TreapNode* erase(TreapNode* t, i64 i)
+{
+    auto [l, t1] = split(t, i);
+    auto [m, r] = split(t1, 1);
+    destroy(m);
+    return merge(l, r);
+}
+
+std::pair<TreapNode*, TreapNode*> cut(TreapNode* t, i64 l, i64 r)
+{
+    auto [t1, rt] = split(t, r);
+    auto [lt, m] = split(t1, l);
+    return { merge(lt, rt), m };
+}
+
+TreapNode* insert(TreapNode* t1, TreapNode* t2, i64 i)
+{
+    auto [lt, rt] = split(t1, i);
+    return merge(merge(lt, t2), rt);
+}
+
+template<typename F>
+void iterate(TreapNode* t, F&& func)
+{
+    if (t == nullptr) { return; }
+    iterate(t->l, std::forward<F>(func));
+    func(t);
+    iterate(t->r, std::forward<F>(func));
+}
+
+int main()
+{
+    //freopen("movetofront.in", "r", stdin);
+    //freopen("movetofront.out", "w", stdout);
+
+    std::ios_base::sync_with_stdio(false); std::cin.tie(nullptr);
+    i64 n, q; std::cin >> n >> q;
+    TreapNode* tr = nullptr;
+    for (i64 i = 0; i < n; i++)
+    {
+        tr = insert(tr, i, i + 1);
+    }
+
+    while (q--)
+    {
+        i64 l, r; std::cin >> l >> r; l--;
+        auto [t1, m] = cut(tr, l, r);
+        tr = insert(t1, m, 0);
+    }
+
+    iterate(tr, [](TreapNode* e) { std::cout << e->val << ' '; });
+
+    destroy(tr);
+}
