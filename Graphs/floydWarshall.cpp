@@ -3,55 +3,36 @@
 #include <algorithm>
 #include <limits>
 
+using i64 = int64_t;
+using u64 = uint64_t;
+using u32 = uint32_t;
+
 template<typename T>
 class Mat2D
 {
 public:
-	Mat2D() {}
-	void resize(int sz) { m.resize((size_t)sz * sz); this->sz = sz; }
-	void resize(int sz, const T& val) { m.resize((size_t)sz * sz, val); this->sz = sz; }
-	T& at(int x, int y) { return m[(size_t)y * sz + x]; }
-	int size() const { return sz; }
+	Mat2D() = default;
+	Mat2D(size_t n) { resize(n); }
+	Mat2D(size_t n, const T& val) { resize(n, val); }
+	void resize(size_t sz) { m.resize(sz * sz); this->sz = sz; }
+	void resize(size_t sz, const T& val) { m.resize(sz * sz, val); this->sz = sz; }
+	T& at(size_t x, size_t y) { return m[y * sz + x]; }
+	size_t size() const { return sz; }
 private:
 	std::vector<T> m;
-	int sz = 0;
+	size_t sz = 0;
 };
 
-Mat2D<int> mat;
-
-void floydWarshall()
+void floydWarshall(Mat2D<i64>& mat)
 {
-	for (int k = 0; k < mat.size(); k++)
+	for (i64 k = 0; k < mat.size(); k++)
 	{
-		for (int i = 0; i < mat.size(); i++)
+		for (i64 i = 0; i < mat.size(); i++)
 		{
-			for (int j = 0; j < mat.size(); j++)
+			for (i64 j = 0; j < mat.size(); j++)
 			{
-				mat.at(i, j) = std::min<int>(mat.at(i, j), std::min<int64_t>((int64_t)mat.at(i, k) + (int64_t)mat.at(k, j), std::numeric_limits<int>::max()));
+				mat.at(i, j) = std::min(mat.at(i, j), mat.at(i, k) + mat.at(k, j));
 			}
 		}
 	}
-}
-
-int main()
-{
-	std::ios_base::sync_with_stdio(false); std::cin.tie(nullptr);
-	int n = 0, s = 0, t = 0;
-	std::cin >> n >> s >> t;
-	s--; t--;
-	mat.resize(n, std::numeric_limits<int>::max());
-	for (int i = 0; i < mat.size(); i++)
-	{
-		for (int j = 0; j < mat.size(); j++)
-		{
-			int v = 0;
-			std::cin >> v;
-			if (v == -1) { continue; }
-			mat.at(i, j) = v;
-		}
-	}
-
-	floydWarshall();
-
-	std::cout << (mat.at(s, t) == std::numeric_limits<int>::max() ? -1 : mat.at(s, t));
 }
