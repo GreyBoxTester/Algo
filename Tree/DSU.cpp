@@ -13,25 +13,68 @@ private:
     };
 public:
     DSU(i64 n)
-        : nodes(n)
+        : tr(n)
     {
-        for (i64 i = 0; i < n; i++) { nodes[i].p = i; }
+        for (i64 i = 0; i < n; i++) { tr[i].p = i; }
     }
 
     i64 find(i64 v)
     {
-        return (nodes[v].p == v) ? v : (nodes[v].p = find(nodes[v].p));
+        return tr[v].p == v ? v : (tr[v].p = find(tr[v].p));
     }
 
-    void join(i64 a, i64 b)
+    bool join(i64 a, i64 b)
     {
         i64 pa = find(a);
         i64 pb = find(b);
-        if (nodes[pa].sz > nodes[pb].sz) { std::swap(pa, pb); }
-        nodes[pa].p = pb;
-        nodes[pb].sz = std::max(nodes[pb].sz, nodes[pa].sz + 1);
+        if (pa == pb) { return false; }
+        if (tr[pa].sz > tr[pb].sz) { std::swap(pa, pb); }
+        tr[pa].p = pb;
+        tr[pb].sz += tr[pa].sz;
+        return true;
     }
 
+    void hang(i64 c, i64 p)
+    {
+        c = find(c);
+        p = find(p);
+        if (c == p) { return; }
+        tr[c].p = p;
+        tr[p].sz += tr[c].sz;
+    }
+
+    i64 size(i64 v)
+    {
+        return tr[find(v)].sz;
+    }
 private:
-    std::vector<Node> nodes;
+    std::vector<Node> tr;
+};
+
+
+class DSUSegJoin
+{
+public:
+    DSUSegJoin(u64 n)
+        : dsu(n), next(n + 1)
+    {}
+
+    i64 find(i64 v) { return dsu.find(v); }
+    bool join(i64 a, i64 b) { return dsu.join(a, b); }
+
+    //O(a(n)) ammortized
+    void joinSeg(i64 a, i64 b)
+    {
+        a = next.find(a);
+        while (a < b)
+        {
+            dsu.join(a, b);
+            next.hang(a, a + 1);
+            a = next.find(a);
+        }
+    }
+
+public:
+    DSU dsu;
+    DSU next;
 };
