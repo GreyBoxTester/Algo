@@ -25,19 +25,17 @@ public:
 
     bool join(i64 a, i64 b)
     {
-        i64 pa = find(a);
-        i64 pb = find(b);
-        if (pa == pb) { return false; }
-        if (tr[pa].sz > tr[pb].sz) { std::swap(pa, pb); }
-        tr[pa].p = pb;
-        tr[pb].sz += tr[pa].sz;
+        a = find(a); b = find(b);
+        if (a == b) { return false; }
+        if (tr[a].sz > tr[b].sz) { std::swap(a, b); }
+        tr[a].p = b;
+        tr[b].sz += tr[a].sz;
         return true;
     }
 
     void hang(i64 c, i64 p)
     {
-        c = find(c);
-        p = find(p);
+        c = find(c); p = find(p);
         if (c == p) { return; }
         tr[c].p = p;
         tr[p].sz += tr[c].sz;
