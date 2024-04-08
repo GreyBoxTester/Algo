@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -40,6 +39,7 @@ void calcST(const std::vector<u64>& a)
     }
 }
 
+//[l, r)
 u64 getST(u64 l, u64 r)
 {
     u64 p = log2Floor(r - l);

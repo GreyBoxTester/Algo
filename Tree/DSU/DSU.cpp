@@ -12,16 +12,9 @@ private:
         i64 p, sz = 1;
     };
 public:
-    DSU(i64 n)
-        : tr(n)
-    {
-        for (i64 i = 0; i < n; i++) { tr[i].p = i; }
-    }
+    DSU(i64 n) : tr(n) { for (i64 i = 0; i < n; i++) { tr[i].p = i; } }
 
-    i64 find(i64 v)
-    {
-        return tr[v].p == v ? v : (tr[v].p = find(tr[v].p));
-    }
+    i64 find(i64 v) { return tr[v].p == v ? v : (tr[v].p = find(tr[v].p)); }
 
     bool join(i64 a, i64 b)
     {
@@ -41,10 +34,7 @@ public:
         tr[p].sz += tr[c].sz;
     }
 
-    i64 size(i64 v)
-    {
-        return tr[find(v)].sz;
-    }
+    i64 size(i64 v) { return tr[find(v)].sz; }
 private:
     std::vector<Node> tr;
 };
