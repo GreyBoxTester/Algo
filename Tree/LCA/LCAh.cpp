@@ -26,7 +26,7 @@ struct Node
 std::vector<Node> nodes;
 void init(i64 v, i64 p, i64 h)
 {
-    nodes[v].up.assign(log2ceil(nodes.size()), v);
+    nodes[v].up.assign(std::max<size_t>(log2ceil(nodes.size()), 1), v);
     nodes[v].up[0] = p;
     nodes[v].h = h;
     for (i64 i = 1; i < nodes[v].up.size(); i++)
