@@ -1,8 +1,6 @@
 #include <vector>
 #include <bit>
 
-//TODO: bad design, rewrite
-
 template<typename T>
 class SegTreePush
 {
@@ -39,15 +37,11 @@ private:
     void add(size_t l, size_t r, T val, size_t x, size_t lx, size_t rx)
     {
         push(x, lx, rx);
-        if (l <= lx && rx <= r) { tr[x].add = val; return; }
+        if (l <= lx && rx <= r) { tr[x].sum += val * (rx - lx); tr[x].add += val; return; }
         if (l >= rx || lx >= r) { return; }
         size_t m = (lx + rx) / 2;
         add(l, r, val, x * 2 + 1, lx, m);
         add(l, r, val, x * 2 + 2, m, rx);
-
-        push(x, lx, rx);
-        push(x * 2 + 1, lx, m);
-        push(x * 2 + 2, m, rx);
         tr[x].sum = tr[x * 2 + 1].sum + tr[x * 2 + 2].sum;
     }
 
@@ -63,13 +57,11 @@ private:
 private:
     void push(size_t x, size_t lx, size_t rx)
     {
-        if (x >= tr.size()) { return; }
-        tr[x].sum += tr[x].add * (rx - lx);
-        if (rx - lx > 1)
-        {
-            tr[x * 2 + 1].add += tr[x].add;
-            tr[x * 2 + 2].add += tr[x].add;
-        }
+        if (rx - lx == 1) { return; }
+        tr[x * 2 + 1].add += tr[x].add;
+        tr[x * 2 + 2].add += tr[x].add;
+        tr[x * 2 + 1].sum += tr[x].add * ((rx - lx) / 2);
+        tr[x * 2 + 2].sum += tr[x].add * ((rx - lx) / 2);
         tr[x].add = 0;
     }
 private:
