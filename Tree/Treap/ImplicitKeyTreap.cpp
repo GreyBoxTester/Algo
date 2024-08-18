@@ -65,7 +65,7 @@ void destroy(TreapNode* t)
 
 i64 randomPriority()
 {
-    static std::mt1993764 re((std::random_device())());
+    static std::mt19937_64 re((std::random_device())());
     return std::uniform_int_distribution<i64>()(re);
 }
 
