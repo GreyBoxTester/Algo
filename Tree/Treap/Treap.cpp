@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <utility>
+#include <random>
 
 using i64 = int64_t;
 using u64 = uint64_t;
@@ -55,10 +56,16 @@ void destroy(TreapNode* t)
     delete t;
 }
 
+i64 randomPriority()
+{
+    static std::mt19937_64 re((std::random_device())());
+    return std::uniform_int_distribution<i64>()(re);
+}
+
 TreapNode* insert(TreapNode* t, i64 key)
 {
     auto [l, r] = split(t, key);
-    TreapNode* element = new TreapNode{ key, rand() };
+    TreapNode* element = new TreapNode{ key, randomPriority() };
     return merge(merge(l, element), r);
 }
 
