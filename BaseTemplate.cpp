@@ -35,6 +35,6 @@ int main()
 {
     std::ios_base::sync_with_stdio(false); std::cin.tie(nullptr);
     i64 t = 1;
-    std::cin >> t;
+    //std::cin >> t;
     while (t--) { alg(); }
 }
