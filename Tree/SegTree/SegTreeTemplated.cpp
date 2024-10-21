@@ -54,8 +54,8 @@ private:
 };
 
 using SegTreeSum = SegTree<i64, i64(*)(i64, i64), 0, [](i64 a, i64 b) { return a + b; }>;
-using SegTreeMin = SegTree<i64, i64(*)(i64, i64), std::numeric_limits<i64>::max(), [](i64 a, i64 b) { return std::min(a, b); }>;
-using SegTreeMax = SegTree<i64, i64(*)(i64, i64), 0, [](i64 a, i64 b) { return std::max(a, b); }>;
+using SegTreeMin = SegTree<i64, const i64& (*)(const i64&, const i64&), std::numeric_limits<i64>::max(), std::min<i64>>;
+using SegTreeMax = SegTree<i64, const i64& (*)(const i64&, const i64&), 0, std::max<i64>>;
 
 template<typename T>
 class DeltaSegTree
