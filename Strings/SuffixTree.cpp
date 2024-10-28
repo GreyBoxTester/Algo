@@ -16,7 +16,7 @@ public:
 
         Node() = default;
         Node(Node* p, size_t l, size_t r) : p(p), l(l), r(r) {}
-        size_t len() { return r - l; }
+        size_t len() const { return r - l; }
     };
 
     struct State
@@ -31,7 +31,7 @@ public:
         bool onEdge() const { return 0 < ind && ind < nd->len(); }
         bool inParent() const { return ind == 0 && nd->len() != 0; }
         bool inNode() const { return ind == nd->len(); }
-        operator bool() { return nd; }
+        operator bool() const { return nd; }
     };
 public:
     SuffixTree(std::string str)
