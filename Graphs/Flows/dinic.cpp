@@ -14,7 +14,6 @@ struct Node
     std::vector<i64> next;
     i64 d = -1;
     i64 p = 0;
-    bool bl = false;
 };
 
 std::vector<Edge> edges;
