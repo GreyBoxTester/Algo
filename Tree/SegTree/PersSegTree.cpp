@@ -2,19 +2,19 @@
 #include <cstdint>
 #include <bit>
 
-template<typename T, typename Operation, T defVal = T(), Operation op = Operation()>
+template<typename T, typename Operation>
 class PersSegTree
 {
 private:
     struct Node
     {
         size_t l = -1, r = -1;
-        T val = defVal;
+        T val;
     };
 
 public:
-    PersSegTree(size_t n)
-        : sz(std::bit_ceil(n))
+    PersSegTree(size_t n, T defVal = T(), Operation op = Operation())
+        : sz(std::bit_ceil(n)), defVal(defVal), op(op)
     {
         roots.push_back(build(0, sz));
     }
@@ -25,9 +25,14 @@ public:
         return roots.size() - 1;
     }
 
-    T get(size_t l, size_t r, size_t ver) const
+    T get(size_t l, size_t r, i64 ver = -1) const
     {
-        return get(l, r, roots[ver], 0, sz);
+        return get(l, r, ver == -1 ? roots.back() : roots[ver], 0, sz);
+    }
+
+    i64 currentVersion() const 
+    { 
+        return roots.size() - 1; 
     }
 
 private:
@@ -48,7 +53,7 @@ private:
         size_t m = (lx + rx) / 2;
         if (i < m) { tr[x].l = set(i, v, tr[x].l, lx, m); }
         else { tr[x].r = set(i, v, tr[x].r, m, rx); }
-        tr[x].val = op(tr[tr[x].l].val, tr[tr[x].r].val);
+        tr[x].val = op(tr[tr[x].l].val, tr[tr[x].r].val, m - lx);
         return x;
     }
 
@@ -57,12 +62,13 @@ private:
         if (l <= lx && rx <= r) { return tr[x].val; }
         if (rx <= l || r <= lx) { return defVal; }
         size_t m = (lx + rx) / 2;
-        return op(get(l, r, tr[x].l, lx, m), get(l, r, tr[x].r, m, rx));
+        return op(get(l, r, tr[x].l, lx, m), get(l, r, tr[x].r, m, rx), m - lx);
     }
 
     size_t create()
     {
         tr.emplace_back();
+        tr.back().val = defVal;
         return tr.size() - 1;
     }
 
@@ -75,4 +81,6 @@ private:
     std::vector<Node> tr;
     std::vector<size_t> roots;
     size_t sz;
+    T defVal;
+    Operation op;
 };
