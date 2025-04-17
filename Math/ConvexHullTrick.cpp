@@ -1,4 +1,7 @@
 #include <vector>
+#include <cstdint>
+#include <algorithm>
+#include <limits>
 
 using i64 = int64_t;
 using u64 = uint64_t;
