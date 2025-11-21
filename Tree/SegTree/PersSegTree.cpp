@@ -9,7 +9,7 @@ private:
     struct Node
     {
         size_t l = -1, r = -1;
-        T val;
+        T val = T();
     };
 
 public:
@@ -30,9 +30,9 @@ public:
         return get(l, r, ver == -1 ? roots.back() : roots[ver], 0, sz);
     }
 
-    i64 currentVersion() const 
-    { 
-        return roots.size() - 1; 
+    i64 currentVersion() const
+    {
+        return roots.size() - 1;
     }
 
 private:
