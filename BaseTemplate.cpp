@@ -14,6 +14,8 @@
 #include <bit>
 #include <queue>
 
+#define all(x) std::begin(x), std::end(x)
+
 namespace rn = std::ranges;
 namespace rv = std::ranges::views;
 
