@@ -100,7 +100,6 @@ std::pair<i64, i64> mcmf()
     while (djikstra())
     {
         i64 delta = std::numeric_limits<i64>::max();
-        i64 cnt = 0;
         for (i64 v = t; v != s; v = edges[nodes[v].par].from)
         {
             delta = std::min(delta, edges[nodes[v].par].cap);
